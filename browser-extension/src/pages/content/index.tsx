@@ -30,7 +30,6 @@ async function init() {
   let n = 0;
   let imgs = []
   for (const e of document.getElementsByTagName("img")) {
-    e.src = "https://i.redd.it/88a4s8wu45ga1.jpg"
     const parent = e.parentElement;
     if (!parent) return;
 
