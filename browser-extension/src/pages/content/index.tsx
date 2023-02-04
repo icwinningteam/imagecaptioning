@@ -22,11 +22,60 @@ function Content(): JSX.Element {
   );
 }
 
-function init() {
+async function init() {
   const rootContainer = document.body;
   if (!rootContainer) throw new Error("Can't find Content root element");
   const root = createRoot(rootContainer);
-  root.render(<Content />);
+
+  let n = 0;
+  let imgs = []
+  for (const e of document.getElementsByTagName("img")) {
+    const parent = e.parentElement;
+    if (!parent) return;
+
+    if (parent.tagName === "figure") {
+      // if (parent.children.includes()) {
+      // }
+      return;
+    }
+
+    const figure = document.createElement("figure");
+    figure.id = `hackathon-figure-element-${n}`
+    figure.style = "display: inline; margin: 0;"
+
+    const caption = document.createElement("figcaption");
+    caption.id = `hackathon-caption-element-${n}`
+
+    imgs.push({ "img": e, "caption": caption })
+
+    figure.insertAdjacentElement("beforeend", caption);
+
+    e.insertAdjacentElement("beforebegin", figure);
+    figure.appendChild(e);
+    n++;
+  }
+
+  let imgData = imgs.map(v => [v.img.src, v.caption.textContent || ""])
+
+  let resp = await fetch('http://localhost:5000/api/captions', {
+    method: "POST",
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(imgData)
+  });
+
+  let respData: string[][] = await resp.json()
+
+  for (const item of respData.entries()) {
+    const index = item[0];
+    const caption = item[1][1];
+    imgs[index].caption.innerText = caption
+    imgs[index].img.alt = caption
+  }
+
+
+  // root.render(<Content />);
 }
 
 init();
