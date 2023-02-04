@@ -33,9 +33,15 @@ async function init() {
     const parent = e.parentElement;
     if (!parent) return;
 
+    let existing_caption = null
+
     if (parent.tagName === "figure") {
-      // if (parent.children.includes()) {
-      // }
+      for (const p of parent.children) {
+        if (p.tagName === "figcaption") {
+          existing_caption = p.innerHTML;
+          break;
+        }
+      }
       return;
     }
 
@@ -45,17 +51,17 @@ async function init() {
 
     const caption = document.createElement("figcaption");
     caption.id = `hackathon-caption-element-${n}`
+    caption.innerText = existing_caption || e.title || e.alt || ""
 
     imgs.push({ "img": e, "caption": caption })
 
-    figure.insertAdjacentElement("beforeend", caption);
-
     e.insertAdjacentElement("beforebegin", figure);
     figure.appendChild(e);
+    figure.insertAdjacentElement("beforeend", caption);
     n++;
   }
 
-  let imgData = imgs.map(v => [v.img.src, v.caption.textContent || ""])
+  let imgData = imgs.map(v => [v.img.src, v.caption.innerText || ""])
 
   let resp = await fetch('http://localhost:5000/api/captions', {
     method: "POST",

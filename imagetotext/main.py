@@ -139,25 +139,23 @@ def parse_images(inp):
     # compare caption to given caption
     ret_array = []
     for i in image_and_captions:
+        print(f"given {i[0]} {i[1]}")
         try:
             ret_array.append([i[0], choose_caption(i)])
         except Exception as e:
             print("choose_caption failed ", e)
             ret_array.append([i[0], i[1]])
-    # convert to dictionary
-    ret = dict()
-    for r in ret_array:
-        ret[r[0]] = r[1]
-    return ret
+
+    return ret_array
 
 
 @app.route("/api/captions", methods=["GET", "POST"])
 @cross_origin()
 def get_captions():
-    objs = parse_images(request.json)
+    parsed = parse_images(request.json)
     app.logger.debug("generated captions")
-    app.logger.debug(objs)
-    return jsonify([[k, v] for (k, v) in objs.items()])
+    app.logger.debug(parsed)
+    return jsonify(parsed)
 
 
 if __name__ == "__main__":
