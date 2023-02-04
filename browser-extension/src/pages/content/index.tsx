@@ -68,6 +68,7 @@ async function init() {
   let respData: string[][] = await resp.json()
 
   for (const item of respData.entries()) {
+    console.log(item);
     const index = item[0];
     const caption = item[1][1];
     imgs[index].caption.innerText = caption
