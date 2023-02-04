@@ -31,6 +31,11 @@ type APIMediaResp = {
   transcript: string,
 }
 
+function createTranscriptDropdown() {
+
+
+}
+
 async function mediaTranscripts() {
   const sources: Map<string, mediaSource> = new Map();
   for (const e of document.getElementsByTagName("audio")) {
@@ -45,6 +50,15 @@ async function mediaTranscripts() {
     e.insertAdjacentElement("afterend", p);
 
     sources.set(e.src, { "type": "video", "element": p })
+  }
+
+  for (const e of document.getElementsByTagName("iframe")) {
+    if (!e.src.startsWith("https://www.youtube.com/embed")) return;
+
+    let p = document.createElement("p")
+    e.insertAdjacentElement("afterend", p);
+
+    sources.set(e.src, { "type": "youtube", "element": p })
   }
 
   let mediaData: APIMediaData[] = []
@@ -65,8 +79,6 @@ async function mediaTranscripts() {
   }
 
   // youtube embeds
-  // for (const e of document.getElementsByTagName("iframe")) {
-  // }
 }
 
 async function captionImages() {
