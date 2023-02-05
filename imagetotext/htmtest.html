@@ -1,0 +1,133 @@
+<html><head><title>Live updates: China protests as US shoots down suspected spy balloon</title><style>body{font-family: courier, serif;background-color:#FFF0C1;}</style><meta charset="UTF-8"><style>
+::selection{
+  color: #fff;
+  background: #5256AD;
+}
+form .row{
+  display: flex;
+  margin-bottom: 20px;
+  flex-direction: column;
+}
+form .row label{
+  font-size: 18px;
+  margin-bottom: 5px;
+}
+form .row:nth-child(2) label{
+  font-size: 17px;
+}
+form :where(textarea, select, button){
+  outline: none;
+  width: 100%;
+  height: 100%;
+  border: none;
+  border-radius: 5px;
+}
+form .row textarea{
+  resize: none;
+  height: 110px;
+  font-size: 15px;
+  padding: 8px 10px;
+  border: 1px solid #999;
+}
+form .row textarea::-webkit-scrollbar{
+  width: 0px;
+}
+form .row .outer{
+  height: 47px;
+  display: flex;
+  padding: 0 10px;
+  align-items: center;
+  border-radius: 5px;
+  justify-content: center;
+  border: 1px solid #999;
+}
+form .row select{
+  font-size: 14px;
+  background: none;
+}
+form .row select::-webkit-scrollbar{
+  width: 8px;
+}
+form .row select::-webkit-scrollbar-track{
+  background: #fff;
+}
+form .row select::-webkit-scrollbar-thumb{
+  background: #888;
+  border-radius: 8px;
+  border-right: 2px solid #ffffff;
+}
+form button{
+  height: 52px;
+  color: #fff;
+  font-size: 17px;
+  cursor: pointer;
+  margin-top: 10px;
+  background: #FFB900;
+  transition: 0.3s ease;
+}
+form button:hover{
+  background: #FFA726;
+}
+</style></head><body><div style="display: flex;justify-content: center;font-size:2em"><h2>Live updates: China protests as US shoots down suspected spy balloon<form action='#'>
+        <div class="row">
+          <label>Select Voice</label>
+          <div class="outer">
+            <select></select>
+          </div>
+        </div>
+        <button>Read Article</button></form></h2></div><div style="display: flex;justify-content: center;font-size:2em"><p><b>A senior US administration official has pushed back on China’s repeated claims that the downed balloon was simply for “civilian use” and had made its way into American airspace by “accident.”<br><br><br><br><image src="https://cdn.cnn.com/cnnnext/dam/assets/230204161220-07-balloon-shot-down-super-tease.jpg"><br><br>“This was a PRC (People's Republic of China) surveillance balloon. This surveillance balloon purposely traversed the United States and Canada and we are confident it was seeking to monitor sensitive military sites,” the official said.<br><br><br><br><image src="https://dynaimage.cdn.cnn.com/cnn/q_auto/https%3A%2F%2Fmedia.cnn.com%2Fapi%2Fv1%2Fimages%2Fstellar%2Fprod%2F230204155854-06-balloon-shot-down.jpg%3Fc%3D16x9%26q%3Dw_800%2Cc_fill"><br><br>“Its route over the United States near many potentially sensitive sites contradicts the PRC government explanation that it is a weather balloon.”<br><br><br><br><image src="https://dynaimage.cdn.cnn.com/cnn/digital-images/org/bc5c356b-1da4-4d31-a32c-921fe8beb131.jpeg"><br><br>The official said a second balloon, spotted over Central and South America, was “another PRC surveillance balloon” and bore similar technical characteristics to the one that flew over the US.<br><br><br><br><image src="https://dynaimage.cdn.cnn.com/cnn/digital-images/org/3386848c-6aa3-4398-869f-183f86f59ad6.jpeg"><br><br>“Both balloons also carry surveillance equipment not usually associated with standard meteorological activities or civilian research,” the official said. “Collection pod equipment and solar panels located on the metal truss suspended below the balloon are a prominent feature of both balloons.”<br><br>The official said China is able to “actively maneuver the balloons to overfly specific locations,” pointing to the balloons’ flight patterns and the small motors and propellers seen in videos as evidence.<br><br>The official said China had used these types of surveillance balloons for years and the devices had been spotted over five continents.<br><br>The pushback comes after China’s Foreign Ministry expressed “dissatisfaction and protest” with the US decision to shoot down the balloon as it reached the Atlantic Ocean today. China once again claimed the balloon was “for civilian use and entered the US due to force majeure – it was completely an accident."</b></p></div><script>
+voiceList = document.querySelector("select"),
+speechBtn = document.querySelector("button");
+
+let synth = speechSynthesis,
+isSpeaking = true;
+
+voices();
+
+function voices(){
+    for(let voice of synth.getVoices()){
+        let selected = voice.name === "Microsoft US English" ? "selected" : "";
+        let option = `<option value="${voice.name}" ${selected}>${voice.name} (${voice.lang})</option>`;
+        voiceList.insertAdjacentHTML("beforeend", option);
+    }
+}
+
+synth.addEventListener("voiceschanged", voices);
+
+function textToSpeech(text){
+    let utterance = new SpeechSynthesisUtterance(text);
+    for(let voice of synth.getVoices()){
+        if(voice.name === voiceList.value){
+            utterance.voice = voice;
+        }
+    }
+    synth.speak(utterance);
+}
+
+speechBtn.addEventListener("click", e =>{
+    e.preventDefault();
+    if(!synth.speaking){
+        textToSpeech("A senior US administration official has pushed back on China’s repeated claims that the downed balloon was simply for “civilian use” and had made its way into American airspace by “accident.”.  “This was a PRC (People's Republic of China) surveillance balloon. This surveillance balloon purposely traversed the United States and Canada and we are confident it was seeking to monitor sensitive military sites,” the official said..  “Its route over the United States near many potentially sensitive sites contradicts the PRC government explanation that it is a weather balloon.”.  The official said a second balloon, spotted over Central and South America, was “another PRC surveillance balloon” and bore similar technical characteristics to the one that flew over the US..  “Both balloons also carry surveillance equipment not usually associated with standard meteorological activities or civilian research,” the official said. “Collection pod equipment and solar panels located on the metal truss suspended below the balloon are a prominent feature of both balloons.”. The official said China is able to “actively maneuver the balloons to overfly specific locations,” pointing to the balloons’ flight patterns and the small motors and propellers seen in videos as evidence.. The official said China had used these types of surveillance balloons for years and the devices had been spotted over five continents.. The pushback comes after China’s Foreign Ministry expressed “dissatisfaction and protest” with the US decision to shoot down the balloon as it reached the Atlantic Ocean today. China once again claimed the balloon was “for civilian use and entered the US due to force majeure – it was completely an accident.'");
+    }
+    if("A senior US administration official has pushed back on China’s repeated claims that the downed balloon was simply for “civilian use” and had made its way into American airspace by “accident.”.  “This was a PRC (People's Republic of China) surveillance balloon. This surveillance balloon purposely traversed the United States and Canada and we are confident it was seeking to monitor sensitive military sites,” the official said..  “Its route over the United States near many potentially sensitive sites contradicts the PRC government explanation that it is a weather balloon.”.  The official said a second balloon, spotted over Central and South America, was “another PRC surveillance balloon” and bore similar technical characteristics to the one that flew over the US..  “Both balloons also carry surveillance equipment not usually associated with standard meteorological activities or civilian research,” the official said. “Collection pod equipment and solar panels located on the metal truss suspended below the balloon are a prominent feature of both balloons.”. The official said China is able to “actively maneuver the balloons to overfly specific locations,” pointing to the balloons’ flight patterns and the small motors and propellers seen in videos as evidence.. The official said China had used these types of surveillance balloons for years and the devices had been spotted over five continents.. The pushback comes after China’s Foreign Ministry expressed “dissatisfaction and protest” with the US decision to shoot down the balloon as it reached the Atlantic Ocean today. China once again claimed the balloon was “for civilian use and entered the US due to force majeure – it was completely an accident.'".length > 80){
+        setInterval(()=>{
+            if(!synth.speaking && !isSpeaking){
+                isSpeaking = true;
+                speechBtn.innerText = "Convert To Speech";
+            }else{
+            }
+        }, 500);
+        if(isSpeaking){
+            synth.resume();
+            isSpeaking = false;
+            speechBtn.innerText = "Pause Speech";
+        }else{
+            synth.pause();
+            isSpeaking = true;
+            speechBtn.innerText = "Resume Speech";
+        }
+    }else{
+        speechBtn.innerText = "Read Article";
+    }
+});
+    </script></body></html>
