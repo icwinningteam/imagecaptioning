@@ -27,7 +27,7 @@ def get_n_photos(url, n):
     photo_size = []
     for i in range(len(photos)):
         size = int(requests.get(photos[i], stream=True).headers["Content-length"])
-        if size >= 2500:
+        if size >= 4000:
             photo_size.append((size, photos[i]))
     photo_size.sort(key=lambda x: x[0])
     return [tup[1] for tup in photo_size][-n:]
@@ -43,10 +43,11 @@ def intersperse_image(trim_text, urls):
         interspersed.append(trim_text[i])
         if trim_text[i] in delims:
             k += 1
-        if k % gap == 0 and n > 0:
-            interspersed.append("%i")
-            n -= 1
-            k = 1
+        if gap != 0:
+            if k % gap == 0 and n > 0:
+                interspersed.append("%i")
+                n -= 1
+                k = 1
     ret = ""
     for r in interspersed:
         ret += r
@@ -94,9 +95,7 @@ def make_html(text, images, url):
     soup = BeautifulSoup(reqs.text, "html.parser")
     title = [soup.find("title").get_text(), "AccessIc Easy Reader"]
     div_style = 'style="display: flex;justify-content: center;font-size:2em"'
-    body_font = (
-        "<style>body{font-family: courier, serif;background-color:#FFF0C1;}</style>"
-    )
+    body_font = "<style>body{font-family: 'Roboto Slab', sans-serif;background-color:#FFF0C1; padding-left: 10%; padding-right: 10%; font-size: 1.8rem;}</style>"
     form_html = """<form action='#'>
         <div class="row">
           <label>Select Voice</label>
@@ -182,6 +181,9 @@ form button{
 form button:hover{
   background: #FFA726;
 }
+img {
+    max-width: 80%;
+}
 """
     java_script = f"""
 voiceList = document.querySelector("select"),
@@ -240,5 +242,5 @@ speechBtn.addEventListener("click", e =>{{
 }});
     """
 
-    final_html = f"""<html><head><title>{title[0]}</title>{body_font}<meta charset="UTF-8"><style>{css}</style></head><body><div {div_style}><h2>{title[0]}{form_html}</h2></div><div {div_style}><p><b>{p_text}</b></p></div><script>{java_script}</script></body></html>"""
+    final_html = f"""<html><head><link rel="preconnect" href="https://fonts.googleapis.com"> <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> <link href="https://fonts.googleapis.com/css2?family=Roboto&family=Roboto+Slab&display=swap" rel="stylesheet"><title>{title[0]}</title>{body_font}<meta charset="UTF-8"><style>{css}</style></head><body><div {div_style}><h2>{title[0]}{form_html}</h2></div><div><p><b>{p_text}</b></p></div><script>{java_script}</script></body></html>"""
     return final_html
