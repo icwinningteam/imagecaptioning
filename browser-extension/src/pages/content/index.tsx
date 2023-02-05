@@ -34,8 +34,23 @@ type APIMediaResp = {
   transcript: string,
 }
 
-function createTranscriptDropdown() {
+function createCaptionElement(mediaElement: HTMLElement, figureElement: HTMLElement, captionElement: HTMLElement) {
+  let divElement = document.createElement("div");
+  figureElement.style = "display: inline; margin: 0;"
+  let s = window.getComputedStyle(mediaElement)
+  let margins = `margin-top: ${s.marginTop}; margin-bottom: ${s.marginBottom}; margin-left: ${s.marginLeft}; margin-right: ${s.marginRight};`
+  let borders = `border-top: ${s.borderTop}; border-bottom: ${s.borderBottom}; border-left: ${s.borderLeft}; border-right: ${s.borderRight};`
+  let paddings = `padding-top: ${s.paddingTop}; padding-bottom: ${s.paddingBottom}; padding-left: ${s.paddingLeft}; padding-right: ${s.paddingRight};`
+  divElement.style = `width: ${s.width}; display: inline-block; border-radius: 0.5rem; background-color: #fff0c1; word-wrap: break-word; ${margins} ${borders} ${paddings}`
 
+  mediaElement.style = "margin: 0 !important; border: 0 !important; padding: 0 !important;"
+
+  captionElement.style = "padding-right: 0.25rem; padding-left: 0.25rem; padding-bottom: 0.25rem; color: black;"
+  mediaElement.insertAdjacentElement("beforebegin", divElement);
+  figureElement.appendChild(mediaElement);
+  figureElement.appendChild(document.createElement("hr"))
+  figureElement.insertAdjacentElement("beforeend", captionElement);
+  divElement.appendChild(figureElement)
 
 }
 
@@ -101,6 +116,7 @@ async function captionImages() {
   let n = 0;
   let imgs = []
   for (const e of document.getElementsByTagName("img")) {
+    if (e.width < 70 || e.height < 70) continue;
     const parent = e.parentElement;
     if (!parent) return;
 
@@ -118,17 +134,13 @@ async function captionImages() {
 
     const figure = document.createElement("figure");
     figure.id = `hackathon-figure-element-${n}`
-    figure.style = "display: inline; margin: 0;"
 
     const caption = document.createElement("figcaption");
     caption.id = `hackathon-caption-element-${n}`
     caption.innerText = existing_caption || e.title || e.alt || ""
 
     imgs.push({ "img": e, "caption": caption })
-
-    e.insertAdjacentElement("beforebegin", figure);
-    figure.appendChild(e);
-    figure.insertAdjacentElement("beforeend", caption);
+    createCaptionElement(e, figure, caption)
     n++;
   }
 
@@ -152,17 +164,17 @@ async function captionImages() {
     imgs[index].img.alt = caption
   }
 
-  let sumresp = await fetch('http://localhost:5000/api/summary', {
-    method: "POST",
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(document.URL)
-  });
+  // let sumresp = await fetch('http://localhost:5000/api/summary', {
+  //   method: "POST",
+  //   headers: {
+  //     'Content-Type': 'application/json'
+  //   },
+  //   body: JSON.stringify(document.URL)
+  // });
 
-  const jsonData = (await sumresp.json()).data;
-  const utterance = new SpeechSynthesisUtterance(jsonData);
-  window.speechSynthesis.speak(utterance);
+  // const jsonData = (await sumresp.json()).data;
+  // const utterance = new SpeechSynthesisUtterance(jsonData);
+  // window.speechSynthesis.speak(utterance);
 
   // root.render(<Content />);
 }
