@@ -54,13 +54,29 @@ function createCaptionElement(mediaElement: HTMLElement, figureElement: HTMLElem
 
 }
 
+function createAudioCaptionElement(mediaElement: HTMLElement, captionElement: HTMLElement) {
+  let divElement = document.createElement("div");
+  let s = window.getComputedStyle(mediaElement)
+  let margins = `margin-top: ${s.marginTop}; margin-bottom: ${s.marginBottom}; margin-left: ${s.marginLeft}; margin-right: ${s.marginRight};`
+  let borders = `border-top: ${s.borderTop}; border-bottom: ${s.borderBottom}; border-left: ${s.borderLeft}; border-right: ${s.borderRight};`
+  let paddings = `padding-top: ${s.paddingTop}; padding-bottom: ${s.paddingBottom}; padding-left: ${s.paddingLeft}; padding-right: ${s.paddingRight};`
+  divElement.style = `display: inline-block; margin: 0; width: ${s.width}; display: inline-block; border-radius: 0.5rem; background-color: #fff0c1; word-wrap: break-word; ${margins} ${borders} ${paddings}`
+
+  mediaElement.style = "margin: 0 !important; border: 0 !important; padding: 0 !important;"
+
+  captionElement.style = "padding-right: 0.25rem; padding-left: 0.25rem; padding-bottom: 0.25rem; color: black;"
+  mediaElement.insertAdjacentElement("beforebegin", divElement);
+  divElement.appendChild(mediaElement)
+  divElement.appendChild(captionElement)
+  captionElement.innerHTML = "Transcribing text..."
+}
+
 async function mediaTranscripts() {
   const sources: Map<string, mediaSource> = new Map();
   for (const e of document.getElementsByTagName("audio")) {
     console.log(`considering audio element ${e}`)
     console.log(e)
     let p = document.createElement("p")
-    e.insertAdjacentElement("afterend", p);
     let audio_src = e.src
     for (const c of e.children) {
       console.log(c);
@@ -73,23 +89,24 @@ async function mediaTranscripts() {
     }
 
     sources.set(audio_src, { "type": "audio", "element": p })
+    createAudioCaptionElement(e, p);
   }
 
   for (const e of document.getElementsByTagName("video")) {
     if ((e.src || "") == "") continue;
     let p = document.createElement("p")
-    e.insertAdjacentElement("afterend", p);
 
     sources.set(e.src, { "type": "video", "element": p })
+    createAudioCaptionElement(e, p);
   }
 
   for (const e of document.getElementsByTagName("iframe")) {
     if (!e.src.startsWith("https://www.youtube.com/embed")) continue;
 
     let p = document.createElement("p")
-    e.insertAdjacentElement("afterend", p);
 
     sources.set(e.src, { "type": "youtube", "element": p })
+    createAudioCaptionElement(e, p);
   }
 
   let mediaData: APIMediaData[] = []
