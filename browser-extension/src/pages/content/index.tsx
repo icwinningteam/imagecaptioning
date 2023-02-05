@@ -11,6 +11,10 @@ async function init() {
   // const rootContainer = document.body;
   // if (!rootContainer) throw new Error("Can't find Content root element");
   // const root = createRoot(rootContainer);
+  let customStyles = document.createElement("style");
+  customStyles.innerHTML = ".transcript-button-hackathon:hover { background-color : #FFA726 }"
+
+  document.getElementsByTagName("head")[0].appendChild(customStyles)
   const audioToTextFlag: boolean = (await chrome.storage.local.get(['audioToText'])).audioToText || false;
   const imageCaptioningFlag: boolean = (await chrome.storage.local.get(['imageCaptioning'])).imageCaptioning || false;
   if (audioToTextFlag) { await mediaTranscripts() }
@@ -36,6 +40,20 @@ type APIMediaResp = {
 
 function createCaptionElement(mediaElement: HTMLElement, figureElement: HTMLElement, captionElement: HTMLElement) {
   let divElement = document.createElement("div");
+  let showButton = document.createElement("button");
+  showButton.innerText = "Hide"
+  showButton.onclick = () => {
+    if (captionElement.style.display == "none") {
+      captionElement.style.display = "block";
+      showButton.innerText = "Hide"
+    } else {
+      captionElement.style.display = "none";
+      showButton.innerText = "Show"
+    }
+  };
+
+  showButton.className = "transcript-button-hackathon"
+  showButton.style = "box-sizing: border-box; width: calc(100% - 0.4rem); margin: 0.2rem; background-color: #FFB900; border-style: none; padding: 0.2rem; border-radius: 0.5rem;";
   figureElement.style = "display: inline; margin: 0;"
   let s = window.getComputedStyle(mediaElement)
   let margins = `margin-top: ${s.marginTop}; margin-bottom: ${s.marginBottom}; margin-left: ${s.marginLeft}; margin-right: ${s.marginRight};`
@@ -48,7 +66,7 @@ function createCaptionElement(mediaElement: HTMLElement, figureElement: HTMLElem
   captionElement.style = "padding-right: 0.25rem; padding-left: 0.25rem; padding-bottom: 0.25rem; color: black;"
   mediaElement.insertAdjacentElement("beforebegin", divElement);
   figureElement.appendChild(mediaElement);
-  figureElement.appendChild(document.createElement("hr"))
+  figureElement.appendChild(showButton)
   figureElement.insertAdjacentElement("beforeend", captionElement);
   divElement.appendChild(figureElement)
 
@@ -56,6 +74,21 @@ function createCaptionElement(mediaElement: HTMLElement, figureElement: HTMLElem
 
 function createAudioCaptionElement(mediaElement: HTMLElement, captionElement: HTMLElement) {
   let divElement = document.createElement("div");
+  let showButton = document.createElement("button");
+  showButton.innerText = "Hide transcript"
+  showButton.onclick = () => {
+    if (captionElement.style.display == "none") {
+      captionElement.style.display = "block";
+      showButton.innerText = "Hide transcript"
+    } else {
+      captionElement.style.display = "none";
+      showButton.innerText = "Show transcript"
+    }
+  };
+
+  showButton.className = "transcript-button-hackathon"
+  showButton.style = "box-sizing: border-box; width: calc(100% - 0.4rem); margin: 0.2rem; background-color: #FFB900; border-style: none; padding: 0.2rem; border-radius: 0.5rem;";
+
   let s = window.getComputedStyle(mediaElement)
   let margins = `margin-top: ${s.marginTop}; margin-bottom: ${s.marginBottom}; margin-left: ${s.marginLeft}; margin-right: ${s.marginRight};`
   let borders = `border-top: ${s.borderTop}; border-bottom: ${s.borderBottom}; border-left: ${s.borderLeft}; border-right: ${s.borderRight};`
@@ -64,9 +97,12 @@ function createAudioCaptionElement(mediaElement: HTMLElement, captionElement: HT
 
   mediaElement.style = "margin: 0 !important; border: 0 !important; padding: 0 !important;"
 
-  captionElement.style = "padding-right: 0.25rem; padding-left: 0.25rem; padding-bottom: 0.25rem; color: black;"
+
+
+  captionElement.style = "padding-right: 0.25rem; padding-left: 0.25rem; padding-bottom: 0.25rem; color: black; margin-block-start: 0.5rem;"
   mediaElement.insertAdjacentElement("beforebegin", divElement);
   divElement.appendChild(mediaElement)
+  divElement.appendChild(showButton)
   divElement.appendChild(captionElement)
   captionElement.innerHTML = "Transcribing text..."
 }

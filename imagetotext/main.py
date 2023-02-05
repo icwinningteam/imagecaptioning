@@ -160,7 +160,7 @@ def parse_images(inp):
 @app.route("/api/captions", methods=["GET", "POST"])
 @cross_origin()
 def get_captions():
-    return jsonify([[i[0], "dummy caption wooooooooooooo"] for i in request.json])
+    # return jsonify([[i[0], "dummy caption wooooooooooooo"] for i in request.json])
     parsed = parse_images(request.json)
     app.logger.debug("generated captions")
     app.logger.debug(parsed)

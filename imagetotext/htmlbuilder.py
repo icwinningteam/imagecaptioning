@@ -7,7 +7,7 @@ from urlextract import URLExtract
 import random
 
 # getNPhotos setup
-exts = [".png", ".jpg", ".gif"]
+exts = [".png", ".jpg", ".gif", ".mp3", ".mp4"]
 
 
 def easy_read(url):
@@ -34,20 +34,20 @@ def get_n_photos(url, n):
 
 
 def intersperse_image(trim_text, urls):
+    trim_text += "\n"
     interspersed = []
     delims = ["\n"]
-    n = len(urls)
+    n = len(urls) + 1
     gap = len(trim_text.split("\n")) // n
     k = 1
     for i in range(len(trim_text)):
         interspersed.append(trim_text[i])
         if trim_text[i] in delims:
             k += 1
-        if gap != 0:
-            if k % gap == 0 and n > 0:
-                interspersed.append("%i")
-                n -= 1
-                k = 1
+        if k % gap == 0 and n > 0:
+            interspersed.append("%i")
+            n -= 1
+            k = 1
     ret = ""
     for r in interspersed:
         ret += r
@@ -93,7 +93,11 @@ def make_html(text, images, url):
     p_text = replace_images(text, images).replace("\n", "<br>")
     reqs = requests.get(url)
     soup = BeautifulSoup(reqs.text, "html.parser")
-    title = [soup.find("title").get_text(), "AccessIc Easy Reader"]
+    titleElem = soup.find("title")
+    if titleElem != None:
+        title = [titleElem.get_text(), "AccessIc Easy Reader"]
+    else:
+        title = ["", "AccessIc Easy Reader"]
     div_style = 'style="display: flex;justify-content: center;font-size:2em"'
     body_font = "<style>body{font-family: 'Roboto Slab', sans-serif;background-color:#FFF0C1; padding-left: 10%; padding-right: 10%; font-size: 1.8rem;}</style>"
     form_html = """<form action='#'>
@@ -118,7 +122,7 @@ def make_html(text, images, url):
 }
 form .row{
   display: flex;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
   flex-direction: column;
 }
 form .row label{
@@ -242,5 +246,5 @@ speechBtn.addEventListener("click", e =>{{
 }});
     """
 
-    final_html = f"""<html><head><link rel="preconnect" href="https://fonts.googleapis.com"> <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> <link href="https://fonts.googleapis.com/css2?family=Roboto&family=Roboto+Slab&display=swap" rel="stylesheet"><title>{title[0]}</title>{body_font}<meta charset="UTF-8"><style>{css}</style></head><body><div {div_style}><h2>{title[0]}{form_html}</h2></div><div><p><b>{p_text}</b></p></div><script>{java_script}</script></body></html>"""
+    final_html = f"""<html><head><link rel="preconnect" href="https://fonts.googleapis.com"> <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> <link href="https://fonts.googleapis.com/css2?family=Roboto&family=Roboto+Slab&display=swap" rel="stylesheet"><title>{title[0]}</title>{body_font}<meta charset="UTF-8"><style>{css}</style></head><body><div {div_style}><h2 style="margin-block-end: 0rem;">{title[0]}{form_html}</h2></div><div><p><b>{p_text}</b></p></div><script>{java_script}</script></body></html>"""
     return final_html
