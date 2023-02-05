@@ -22,11 +22,78 @@ function Content(): JSX.Element {
   );
 }
 
-function init() {
+async function init() {
   const rootContainer = document.body;
   if (!rootContainer) throw new Error("Can't find Content root element");
   const root = createRoot(rootContainer);
-  root.render(<Content />);
+
+  let n = 0;
+  let imgs = []
+  for (const e of document.getElementsByTagName("img")) {
+    const parent = e.parentElement;
+    if (!parent) return;
+
+    let existing_caption = null
+
+    if (parent.tagName === "figure") {
+      for (const p of parent.children) {
+        if (p.tagName === "figcaption") {
+          existing_caption = p.innerHTML;
+          break;
+        }
+      }
+      return;
+    }
+
+    const figure = document.createElement("figure");
+    figure.id = `hackathon-figure-element-${n}`
+    figure.style = "display: inline; margin: 0;"
+
+    const caption = document.createElement("figcaption");
+    caption.id = `hackathon-caption-element-${n}`
+    caption.innerText = existing_caption || e.title || e.alt || ""
+
+    imgs.push({ "img": e, "caption": caption })
+
+    e.insertAdjacentElement("beforebegin", figure);
+    figure.appendChild(e);
+    figure.insertAdjacentElement("beforeend", caption);
+    n++;
+  }
+
+  let imgData = imgs.map(v => [v.img.src, v.caption.innerText || ""])
+
+  let resp = await fetch('http://localhost:5000/api/captions', {
+    method: "POST",
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(imgData)
+  });
+
+  let respData: string[][] = await resp.json()
+
+  for (const item of respData.entries()) {
+    console.log(item);
+    const index = item[0];
+    const caption = item[1][1];
+    imgs[index].caption.innerText = caption
+    imgs[index].img.alt = caption
+  }
+
+  let sumresp = await fetch('http://localhost:5000/api/summary', {
+    method: "POST",
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(document.URL)
+  });
+
+  const jsonData = (await sumresp.json()).data;
+  const utterance = new SpeechSynthesisUtterance(jsonData);
+  window.speechSynthesis.speak(utterance);
+
+  // root.render(<Content />);
 }
 
 init();
