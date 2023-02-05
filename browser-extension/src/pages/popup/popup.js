@@ -2,8 +2,8 @@ const switch1 = document.getElementById("switch1");
 const slider1 = document.getElementById("slider1");
 const switch2 = document.getElementById("switch2");
 const switch3 = document.getElementById("switch3");
+const button1 = document.getElementById("button1");
 const switch4 = document.getElementById("switch4");
-const switch4 = document.getElementById("switch5");
 
 
 chrome.storage.local.get(['textToSpeech']).then(
