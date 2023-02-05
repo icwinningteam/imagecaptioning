@@ -11,7 +11,8 @@ async function init() {
   // const rootContainer = document.body;
   // if (!rootContainer) throw new Error("Can't find Content root element");
   // const root = createRoot(rootContainer);
-  await captionImages();
+  await mediaTranscripts();
+  // await captionImages();
 
   // root.render(<Content />);
 }
@@ -39,13 +40,26 @@ function createTranscriptDropdown() {
 async function mediaTranscripts() {
   const sources: Map<string, mediaSource> = new Map();
   for (const e of document.getElementsByTagName("audio")) {
+    console.log(`considering audio element ${e}`)
+    console.log(e)
     let p = document.createElement("p")
     e.insertAdjacentElement("afterend", p);
+    let audio_src = e.src
+    for (const c of e.children) {
+      console.log(c);
+      console.log(c.tagName);
+      if (c.tagName.toLowerCase() === "source") {
+        console.log(`found src ${c.src}`)
+        audio_src = c.src
+        break;
+      }
+    }
 
-    sources.set(e.src, { "type": "audio", "element": p })
+    sources.set(audio_src, { "type": "audio", "element": p })
   }
 
   for (const e of document.getElementsByTagName("video")) {
+    if ((e.src || "") == "") continue;
     let p = document.createElement("p")
     e.insertAdjacentElement("afterend", p);
 
@@ -53,7 +67,7 @@ async function mediaTranscripts() {
   }
 
   for (const e of document.getElementsByTagName("iframe")) {
-    if (!e.src.startsWith("https://www.youtube.com/embed")) return;
+    if (!e.src.startsWith("https://www.youtube.com/embed")) continue;
 
     let p = document.createElement("p")
     e.insertAdjacentElement("afterend", p);
