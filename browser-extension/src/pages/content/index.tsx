@@ -86,18 +86,13 @@ async function init() {
     headers: {
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify(document.url)
+    body: JSON.stringify(document.URL)
   });
 
-  fetch(sumresp)
-    .then(response => response.json())
-    .then(jsonData => {
-      // Send the JSON data to the background script
       chrome.runtime.sendMessage({
         action: 'readJSON',
-        jsonData
+        jsonData: await sumresp.json()
       });
-    });
 
 
 
