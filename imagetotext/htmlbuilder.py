@@ -228,11 +228,11 @@ speechBtn.addEventListener("click", e =>{{
         if(isSpeaking){{
             synth.resume();
             isSpeaking = false;
-            speechBtn.innerText = "Pause Speech";
+            speechBtn.innerText = "Stop Speech";
         }}else{{
-            synth.pause();
+            synth.cancel();
             isSpeaking = true;
-            speechBtn.innerText = "Resume Speech";
+            speechBtn.innerText = "Start Speech";
         }}
     }}else{{
         speechBtn.innerText = "Read Article";
