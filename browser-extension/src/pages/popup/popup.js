@@ -26,16 +26,22 @@ document.getElementById('switch3').addEventListener('change', function () {
     localStorage.setItem('readSummary', checkBox.checked);
 });
 
+document.getElementById('button1').addEventListener('click', function () {
+    // Add function
+    var checkBox = document.getElementById('button1');
+});
+
 document.getElementById('switch4').addEventListener('change', function () {
     // Add function
     var checkBox = document.getElementById('switch4');
 
-    localStorage.setItem('easyReader', checkBox.checked);
-});
-
-document.getElementById('switch5').addEventListener('change', function () {
-    // Add function
-    var checkBox = document.getElementById('switch5');
-
     localStorage.setItem('audioToText', checkBox.checked);
 });
+
+window.onload = function () {
+    // Check if localStorage is available (IE8+) and make sure that the visited flag is not already set.
+    if (typeof window.localStorage !== 'undefined') {
+        var checkBox = document.getElementById('switch1');
+        checkBox.checked = localStorage.getItem('textToSpeech');
+    }
+};
