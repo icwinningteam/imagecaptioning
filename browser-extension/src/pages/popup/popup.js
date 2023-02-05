@@ -1,8 +1,13 @@
-document.getElementById('switch1').addEventListener('change', function () {
+document.getElementById('switch1').addEventListener('click', function () {
     // Add function
     var checkBox = document.getElementById('switch1');
 
     localStorage.setItem('textToSpeech', checkBox.checked);
+    // chrome.tabs.create({
+    //     url:
+    //         'data:text/html;charset=utf-8,' + encodeURIComponent('Hello world'),
+    // });
+    console.log(localStorage.getItem('textToSpeech'));
 });
 
 document.getElementById('slider1').addEventListener('change', function () {
@@ -37,11 +42,3 @@ document.getElementById('switch4').addEventListener('change', function () {
 
     localStorage.setItem('audioToText', checkBox.checked);
 });
-
-window.onload = function () {
-    // Check if localStorage is available (IE8+) and make sure that the visited flag is not already set.
-    if (typeof window.localStorage !== 'undefined') {
-        var checkBox = document.getElementById('switch1');
-        checkBox.checked = localStorage.getItem('textToSpeech');
-    }
-};
