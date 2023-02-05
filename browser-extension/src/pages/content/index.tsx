@@ -11,8 +11,10 @@ async function init() {
   // const rootContainer = document.body;
   // if (!rootContainer) throw new Error("Can't find Content root element");
   // const root = createRoot(rootContainer);
-  await mediaTranscripts();
-  // await captionImages();
+  const audioToTextFlag: boolean = (await chrome.storage.local.get(['audioToText'])).audioToText || false;
+  const imageCaptioningFlag: boolean = (await chrome.storage.local.get(['imageCaptioning'])).imageCaptioning || false;
+  if (audioToTextFlag) { await mediaTranscripts() }
+  if (imageCaptioningFlag) { await captionImages() }
 
   // root.render(<Content />);
 }
