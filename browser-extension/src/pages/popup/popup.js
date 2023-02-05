@@ -3,7 +3,7 @@ const slider1 = document.getElementById("slider1");
 const switch2 = document.getElementById("switch2");
 const switch3 = document.getElementById("switch3");
 const switch4 = document.getElementById("switch4");
-const switch5 = document.getElementById("switch5");
+const switch4 = document.getElementById("switch5");
 
 
 chrome.storage.local.get(['textToSpeech']).then(
@@ -43,8 +43,8 @@ chrome.storage.local.get(['easyReader']).then(
 
 chrome.storage.local.get(['audioToText']).then(
     (result) => {
-        switch5.checked = result.audioToText;
-        switch5.disabled = false;
+        switch4.checked = result.audioToText;
+        switch4.disabled = false;
     }
 );
 
@@ -68,12 +68,21 @@ switch3.addEventListener('change', function () {
     chrome.storage.local.set({ 'readSummary': switch3.checked });
 });
 
-switch4.addEventListener('change', function () {
+button1.addEventListener('click', function () {
     // Add function
-    chrome.storage.local.set({ 'easyReader': switch4.checked });
+    // var checkBox = document.getElementById('button1');
+    // open reader mode page
 });
 
-switch5.addEventListener('change', function () {
+switch4.addEventListener('change', function () {
     // Add function
-    chrome.storage.local.set({ 'audioToText': switch5.checked });
+    chrome.storage.local.set({ 'audioToText': switch4.checked });
 });
+
+window.onload = function () {
+    // Check if localStorage is available (IE8+) and make sure that the visited flag is not already set.
+    if (typeof window.localStorage !== 'undefined') {
+        var checkBox = document.getElementById('switch1');
+        checkBox.checked = localStorage.getItem('textToSpeech');
+    }
+};
