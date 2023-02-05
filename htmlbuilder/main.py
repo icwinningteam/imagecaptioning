@@ -6,13 +6,18 @@ from newspaper import Article
 from urlextract import URLExtract
 import random
 
-# flask setup
-app = Flask(__name__)
-app.static_folder = 'static'
-
-
 # getNPhotos setup
 exts = [".png", ".jpg", ".gif"]
+
+
+def easy_read(request):
+    url = json.loads(request.json)
+    n = 10
+    n_images = get_n_photos(url, n)
+    pre_parsed_text = trim_article(url)
+    random.shuffle(n_images)
+    text = intersperse_image(pre_parsed_text, n_images)
+    return make_html(text, n_images, url)
 
 
 def get_n_photos(url, n):
@@ -22,7 +27,7 @@ def get_n_photos(url, n):
     photos = list(article.imgs)
     photo_size = []
     for i in range(len(photos)):
-        size = int(requests.get(photos[i], stream = True).headers['Content-length'])
+        size = int(requests.get(photos[i], stream=True).headers["Content-length"])
         if size >= 2500:
             photo_size.append((size, photos[i]))
     photo_size.sort(key=lambda x: x[0])
@@ -31,7 +36,7 @@ def get_n_photos(url, n):
 
 def intersperse_image(trim_text, urls):
     interspersed = []
-    delims = ['\n']
+    delims = ["\n"]
     n = len(urls)
     gap = len(trim_text.split("\n")) // n
     k = 1
@@ -39,7 +44,7 @@ def intersperse_image(trim_text, urls):
         interspersed.append(trim_text[i])
         if trim_text[i] in delims:
             k += 1
-        if k%gap == 0 and n > 0:
+        if k % gap == 0 and n > 0:
             interspersed.append("%i")
             n -= 1
             k = 1
@@ -84,35 +89,31 @@ def replace_images(text, images):
     return ret
 
 
-@app.route("/api/easyread", methods=["GET", "POST"])
-def easy_read():
-    url = json.loads(request.json)
-    n = 10
-    n_images = get_n_photos(url, n)
-    pre_parsed_text = trim_article(url)
-    random.shuffle(n_images)
-    text = intersperse_image(pre_parsed_text, n_images)
-    return make_html(text, n_images, url)
-
-
 def make_html(text, images, url):
-    p_text = replace_images(text, images).replace('\n', '<br>')
+    p_text = replace_images(text, images).replace("\n", "<br>")
     reqs = requests.get(url)
-    soup = BeautifulSoup(reqs.text, 'html.parser')
-    title = [soup.find('title').get_text(), "AccessIc Easy Reader"]
+    soup = BeautifulSoup(reqs.text, "html.parser")
+    title = [soup.find("title").get_text(), "AccessIc Easy Reader"]
     div_style = 'style="display: flex;justify-content: center;font-size:2em"'
-    body_font = '<style>body{font-family: courier, serif;background-color:#FFF0C1;}</style>'
-    form_html = '''<form action='#'>
+    body_font = (
+        "<style>body{font-family: courier, serif;background-color:#FFF0C1;}</style>"
+    )
+    form_html = """<form action='#'>
         <div class="row">
           <label>Select Voice</label>
           <div class="outer">
             <select></select>
           </div>
         </div>
-        <button>Read Article</button></form>'''
+        <button>Read Article</button></form>"""
 
-    js_text = text.replace('\n\n', '\n').replace('\n', '. ').replace('%i', ' ').replace('"', "'")
-    css = '''
+    js_text = (
+        text.replace("\n\n", "\n")
+        .replace("\n", ". ")
+        .replace("%i", " ")
+        .replace('"', "'")
+    )
+    css = """
 ::selection{
   color: #fff;
   background: #5256AD;
@@ -182,8 +183,8 @@ form button{
 form button:hover{
   background: #FFA726;
 }
-'''
-    java_script = f'''
+"""
+    java_script = f"""
 voiceList = document.querySelector("select"),
 speechBtn = document.querySelector("button");
 
@@ -238,20 +239,7 @@ speechBtn.addEventListener("click", e =>{{
         speechBtn.innerText = "Read Article";
     }}
 }});
-    '''
+    """
 
-    final_html = f'''<html><head><title>{title[0]}</title>{body_font}<meta charset="UTF-8"><style>{css}</style></head><body><div {div_style}><h2>{title[0]}{form_html}</h2></div><div {div_style}><p><b>{p_text}</b></p></div><script>{java_script}</script></body></html>'''
+    final_html = f"""<html><head><title>{title[0]}</title>{body_font}<meta charset="UTF-8"><style>{css}</style></head><body><div {div_style}><h2>{title[0]}{form_html}</h2></div><div {div_style}><p><b>{p_text}</b></p></div><script>{java_script}</script></body></html>"""
     return final_html
-
-
-if __name__ == '__main__':
-    # text = make_html('a '*1000, ['https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/Iron_Man_in_Texas_%287956032050%29.jpg/340px-Iron_Man_in_Texas_%287956032050%29.jpg'], "https://newspaper.readthedocs.io/en/latest/user_guide/quickstart.html#building-a-news-source")
-    # text = easy_read("https://edition.cnn.com/politics/live-news/china-spy-balloon-us-latest-02-05-23/index.html")
-    #
-    # print(text)
-    # file = open('htmtest.html', 'w')
-    # file.write(text)
-    # file.close()
-
-    app.run()
-    

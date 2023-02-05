@@ -11,6 +11,7 @@ import json
 from logging.config import dictConfig
 import newspaper
 import nltk
+from htmlbuilder.main import easy_read
 
 nltk.download("punkt")
 
@@ -182,6 +183,12 @@ def get_summary_handler():
     summary = get_summary(data)
     print(summary)
     return jsonify({"data": summary})
+
+
+@app.route("/api/easyread", methods=["GET", "POST"])
+@cross_origin()
+def easy_read_handler():
+    return easy_read(request)
 
 
 if __name__ == "__main__":
