@@ -89,13 +89,9 @@ async function init() {
     body: JSON.stringify(document.URL)
   });
 
-      chrome.runtime.sendMessage({
-        action: 'readJSON',
-        jsonData: await sumresp.json()
-      });
-
-
-
+  const jsonData = (await sumresp.json()).data;
+  const utterance = new SpeechSynthesisUtterance(jsonData);
+  window.speechSynthesis.speak(utterance);
 
   // root.render(<Content />);
 }

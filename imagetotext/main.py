@@ -9,6 +9,10 @@ from flask_cors import CORS, cross_origin
 from cairosvg import svg2png
 import json
 from logging.config import dictConfig
+import newspaper
+import nltk
+
+nltk.download("punkt")
 
 dictConfig(
     {
@@ -156,6 +160,28 @@ def get_captions():
     app.logger.debug("generated captions")
     app.logger.debug(parsed)
     return jsonify(parsed)
+
+
+def get_summary(url):
+    # Extract web data
+    url_i = newspaper.Article(url="%s" % url, language="en", fetch_images=True)
+    url_i.download()
+    url_i.parse()
+    url_i.nlp()
+    summ = url_i.summary
+    ret = ""
+    for line in summ.splitlines():
+        ret += line.split(" ", 1)[1] + "\n"
+    return ret
+
+
+@app.route("/api/summary", methods=["GET", "POST"])
+@cross_origin()
+def get_summary_handler():
+    data = request.json
+    summary = get_summary(data)
+    print(summary)
+    return jsonify({"data": summary})
 
 
 if __name__ == "__main__":
