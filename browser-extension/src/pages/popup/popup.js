@@ -34,13 +34,6 @@ chrome.storage.local.get(['readSummary']).then(
     }
 );
 
-chrome.storage.local.get(['easyReader']).then(
-    (result) => {
-        switch4.checked = result.textToSpeech;
-        switch4.disabled = false;
-    }
-);
-
 chrome.storage.local.get(['audioToText']).then(
     (result) => {
         switch4.checked = result.audioToText;
