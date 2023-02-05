@@ -11,7 +11,7 @@ import json
 from logging.config import dictConfig
 import newspaper
 import nltk
-from htmlbuilder.main import easy_read
+from htmlbuilder import easy_read
 from mp3_to_text import mp3_to_text
 from mp4_to_mp3 import mp4_to_mp3
 from youtube_to_mp3 import youtube_to_mp3
@@ -191,7 +191,8 @@ def get_summary_handler():
 @app.route("/api/easyread", methods=["GET", "POST"])
 @cross_origin()
 def easy_read_handler():
-    return easy_read(request)
+    print(request.json)
+    return easy_read(request.json["data"])
 
 
 def get_audio_transcript(url):

@@ -10,8 +10,7 @@ import random
 exts = [".png", ".jpg", ".gif"]
 
 
-def easy_read(request):
-    url = json.loads(request.json)
+def easy_read(url):
     n = 10
     n_images = get_n_photos(url, n)
     pre_parsed_text = trim_article(url)

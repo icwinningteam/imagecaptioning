@@ -18,7 +18,7 @@ const manifest: ManifestTypeV3 = {
       matches: [],
     },
   ],
-  permissions: ["storage"]
+  permissions: ["storage", "tabs"]
 };
 
 function getManifestV3(pageDirMap: { [x: string]: any }): ManifestTypeV3 {

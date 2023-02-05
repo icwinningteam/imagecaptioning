@@ -61,11 +61,28 @@ switch3.addEventListener('change', function () {
     chrome.storage.local.set({ 'readSummary': switch3.checked });
 });
 
-button1.addEventListener('click', function () {
+button1.addEventListener('click', async function () {
     // Add function
     // var checkBox = document.getElementById('button1');
-    // open reader mode page
-});
+    // open reader .mode page
+    let queryOptions = { active: true, currentWindow: true };
+    // `tab` will either be a `tabs.Tab` instance or `undefined`.
+    let turl = (await chrome.tabs.query(queryOptions))[0].url
+
+    let resp = await fetch('http://localhost:5000/api/easyread', {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ "data": turl })
+    });
+
+    let text = await resp.text()
+
+    chrome.tabs.create({ url: "data:text/html;charset=utf8," + encodeURIComponent(text) })
+
+})
+
 
 switch4.addEventListener('change', function () {
     // Add function
