@@ -81,6 +81,26 @@ async function init() {
     imgs[index].img.alt = caption
   }
 
+  let sumresp = await fetch('http://localhost:5000/api/summary', {
+    method: "POST",
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(document.url)
+  });
+
+  fetch(sumresp)
+    .then(response => response.json())
+    .then(jsonData => {
+      // Send the JSON data to the background script
+      chrome.runtime.sendMessage({
+        action: 'readJSON',
+        jsonData
+      });
+    });
+
+
+
 
   // root.render(<Content />);
 }
