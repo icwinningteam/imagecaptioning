@@ -1,12 +1,135 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="UTF-8" />
-        <title>Popup</title>
-    </head>
+<style>
+.container {
+  width: 280px;
+  color: #314d3e;
+}
 
-    <body>
-        <div id="__root"></div>
-        <script src="./index.tsx"></script>
-    </body>
-</html>
+.title {
+  font-size: 14px;
+  font-weight: bold;
+  padding: 8px;
+}
+
+.textbox {
+  width: 100%;
+  font-size: 12px;
+  margin: 0;
+  padding: 0px 2px;
+}
+
+.textbox:focus {
+  outline: 0;
+  border-color: #66afe9;
+}
+
+.bookmarks {
+  margin: 5px 5px;
+  padding: 3px;
+}
+
+.bookmark {
+  display: flex;
+  border-bottom-color: #00254d;
+  border-bottom-width: 1px;
+  border-bottom-style: solid;
+  border-radius: 0.8rem;
+  padding: 3px;
+  padding-bottom: 7px;
+  margin-bottom: 7px;
+}
+
+.bookmark-title {
+  padding-left: 2px;
+}
+
+.bookmark-controls img {
+  margin: 0 4px;
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+}
+
+.bookmark-controls {
+  flex: auto;
+  text-align: right;
+}
+
+#header {
+  font-size: 30px;
+  font-weight: bold;
+  top: 0px;
+  background-color: #0097e6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+}
+
+.component {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 10px;
+}
+
+</style>
+<script type="module" src="popup.js"></script>
+
+<div class="container">
+  <div id="header">EasyWeb</div>
+  <div class="component">
+    <div>Text to Speech</div>
+    <label class="switch">
+      <input id="switch1" type="checkbox"/>
+      <span class="slider round"></span>
+    </label>
+  </div>
+
+  <div class="component">
+    <div>Voice</div>
+    <select name="cars" id="cars">
+      <option value="male">Male</option>
+      <option value="female">Female</option>
+    </select>
+  </div>
+
+  
+  <div class="component">
+    <div>Speed</div>
+    <div class="slidecontainer">
+      <input type="range" min="1" max="100" value="50" class="slider" id="slider1">
+    </div>
+  </div>
+
+  <div class="component">
+    <div>Image Captioning</div>
+      <label class="switch">
+        <input type="checkbox" id="switch2">
+        <span class="slider round"></span>
+      </label>
+    </div>
+  <div>
+
+
+  <div class="component">
+    <div>Read Summary</div>
+    <label class="switch">
+      <input type="checkbox" id="switch3">
+      <span class="slider round"></span>
+    </label>
+  </div>
+
+  
+  <div class="component">
+    <div>Easy Reader</div>
+    <button type="button" id="button1">Button</button>
+  </div>
+
+   <div class="component">
+    <div>Audio to Text</div>
+    <label class="switch">
+      <input type="checkbox" id="switch4">
+      <span class="slider round"></span>
+    </label>
+  </div> 
+</div>

@@ -3,30 +3,101 @@ import { createRoot } from "react-dom/client";
 
 function Content(): JSX.Element {
   return (
-    <div className="absolute top-0 left-0 right-0 bottom-0 text-center h-full p-3 bg-gray-800">
-      <header className="flex flex-col items-center justify-center text-white">
-        <p>
-          Edit <code>src/pages/content/index.jsx</code> and save to reload.
-        </p>
-        <a
-          className="text-blue-400"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React!
-        </a>
-        <p>Content styled</p>
-      </header>
-    </div>
+    <h1 className="text-red-600">howdy!</h1>
   );
 }
 
 async function init() {
-  const rootContainer = document.body;
-  if (!rootContainer) throw new Error("Can't find Content root element");
-  const root = createRoot(rootContainer);
+  // const rootContainer = document.body;
+  // if (!rootContainer) throw new Error("Can't find Content root element");
+  // const root = createRoot(rootContainer);
+  const audioToTextFlag: boolean = (await chrome.storage.local.get(['audioToText'])).audioToText || false;
+  const imageCaptioningFlag: boolean = (await chrome.storage.local.get(['imageCaptioning'])).imageCaptioning || false;
+  if (audioToTextFlag) { await mediaTranscripts() }
+  if (imageCaptioningFlag) { await captionImages() }
 
+  // root.render(<Content />);
+}
+
+type mediaSource = {
+  type: string,
+  element: HTMLParagraphElement
+}
+
+type APIMediaData = {
+  url: string,
+  type: string,
+}
+
+type APIMediaResp = {
+  url: string,
+  transcript: string,
+}
+
+function createTranscriptDropdown() {
+
+
+}
+
+async function mediaTranscripts() {
+  const sources: Map<string, mediaSource> = new Map();
+  for (const e of document.getElementsByTagName("audio")) {
+    console.log(`considering audio element ${e}`)
+    console.log(e)
+    let p = document.createElement("p")
+    e.insertAdjacentElement("afterend", p);
+    let audio_src = e.src
+    for (const c of e.children) {
+      console.log(c);
+      console.log(c.tagName);
+      if (c.tagName.toLowerCase() === "source") {
+        console.log(`found src ${c.src}`)
+        audio_src = c.src
+        break;
+      }
+    }
+
+    sources.set(audio_src, { "type": "audio", "element": p })
+  }
+
+  for (const e of document.getElementsByTagName("video")) {
+    if ((e.src || "") == "") continue;
+    let p = document.createElement("p")
+    e.insertAdjacentElement("afterend", p);
+
+    sources.set(e.src, { "type": "video", "element": p })
+  }
+
+  for (const e of document.getElementsByTagName("iframe")) {
+    if (!e.src.startsWith("https://www.youtube.com/embed")) continue;
+
+    let p = document.createElement("p")
+    e.insertAdjacentElement("afterend", p);
+
+    sources.set(e.src, { "type": "youtube", "element": p })
+  }
+
+  let mediaData: APIMediaData[] = []
+  sources.forEach((v, k) => mediaData.push({ "url": k, "type": v.type }))
+
+  let resp = await fetch('http://localhost:5000/api/transcript', {
+    method: "POST",
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(mediaData)
+  });
+
+  let respData: APIMediaResp[] = await resp.json()
+
+  for (const item of respData) {
+    sources.get(item.url)!["element"].innerHTML = item["transcript"]
+  }
+
+  // youtube embeds
+}
+
+async function captionImages() {
   let n = 0;
   let imgs = []
   for (const e of document.getElementsByTagName("img")) {
