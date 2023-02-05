@@ -190,7 +190,7 @@ async function captionImages() {
 
     const caption = document.createElement("figcaption");
     caption.id = `hackathon-caption-element-${n}`
-    caption.innerText = existing_caption || e.title || e.alt || ""
+    caption.innerText = existing_caption || e.title || e.alt || "Generating caption..."
 
     imgs.push({ "img": e, "caption": caption })
     createCaptionElement(e, figure, caption)
